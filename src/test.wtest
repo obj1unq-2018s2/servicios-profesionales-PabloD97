@@ -1,0 +1,139 @@
+import universidades.*
+import profesionales.*
+import empresas.*
+
+describe " test de todos"{
+	
+	var sanMartin= new Universidad()
+	var rosario=  new Universidad()
+	var corrientes= new Universidad()
+	var hurlingham= new Universidad()
+	
+	var juana= new ProfesionalVinculado()
+	var melina= new ProfesionalAsociado()
+	var rocio= new ProfesionalLibre()
+	var luciana= new ProfesionalLibre()
+	
+	
+	//empresa de servicio
+	var edesur= new EmpresasDeServicio()
+	
+	fixture{
+		//universidades
+		sanMartin.provincia("Buenos Aires")
+		sanMartin.honorariosRecomendados(3500)
+		
+		rosario.provincia("Santa Fe")
+		rosario.honorariosRecomendados(2800)
+		
+		corrientes.provincia("Corrientes")
+		corrientes.honorariosRecomendados(4200)
+		
+		hurlingham.provincia("Buenos Aires")
+		hurlingham.honorariosRecomendados(8800)
+		
+		//empresa
+		edesur.contratarProfesional(juana)
+		edesur.contratarProfesional(melina)
+		edesur.contratarProfesional(rocio)
+		edesur.contratarProfesional(luciana)
+		
+		edesur.honorariosReferencia(3500)
+		
+		//profesionales
+		juana.universidad(rosario)
+		melina.universidad(corrientes)
+		
+		rocio.universidad(hurlingham)
+		rocio.honorariosPorHora(5000)
+		rocio.provinciasDondePuedeTrabajar(#{"Santa Fe", "Cordoba", "Buenos Aires"})
+		
+		luciana.universidad(rosario)
+		luciana.honorariosPorHora(3200)
+		luciana.provinciasDondePuedeTrabajar(#{"Santa Fe", "Buenos Aires"})
+		
+	}
+
+	//TESTS DE UNIVERSIDADES
+
+	test "universidad de  San Martin "{
+		assert.equals("Buenos Aires", sanMartin.provincia())
+		assert.equals(3500, sanMartin.honorariosRecomendados())	
+	}
+	
+	test " universidad de Rosario "{
+		assert.equals("Santa Fe", rosario.provincia())
+		assert.equals(2800, rosario.honorariosRecomendados())	
+	}
+	
+	test "universidad de corrientes"{
+		assert.equals("Corrientes", corrientes.provincia())
+		assert.equals(4200, corrientes.honorariosRecomendados())	
+	}
+	
+	test "universidad de Hurlingham"{
+		assert.equals("Buenos Aires", hurlingham.provincia())
+		assert.equals(8800, hurlingham.honorariosRecomendados())	
+	}
+
+	//TESTS DE PROFESIONALES
+	
+	test "profesional vinculada Juana"{	
+		juana.universidad(rosario)
+		assert.equals(rosario, juana.universidad())
+	}
+	
+	test "profesional asociada Melina"{
+		melina.universidad(corrientes)
+		assert.equals(corrientes, melina.universidad())
+	}
+	
+	test "profesional libre rocio"{
+		rocio.universidad(hurlingham)
+		assert.equals(hurlingham, rocio.universidad())
+		rocio.honorariosPorHora(5000)
+		assert.equals(5000, rocio.honorariosPorHora())
+		rocio.provinciasDondePuedeTrabajar(#{"Santa Fe", "Cordoba", "Buenos Aires"})
+		assert.equals(#{"Santa Fe","Cordoba","Buenos Aires"}, rocio.provinciasDondePuedeTrabajar())
+	}
+	
+	test "profesional libre Luciana"{
+		luciana.universidad(rosario)
+		assert.equals(rosario, luciana.universidad())
+		luciana.honorariosPorHora(3200)
+		assert.equals(3200, luciana.honorariosPorHora())
+		luciana.provinciasDondePuedeTrabajar(#{"Santa Fe", "Entre Rios"})
+		assert.equals(#{"Santa Fe","Entre Rios"}, luciana.provinciasDondePuedeTrabajar())	
+	}
+	
+	//TEST DE LA EMPRESA
+	
+	test "profesional mas caro de edesur"{
+		assert.equals(#{rocio}, edesur.profesionalesCaros())		
+	}
+	
+	test "universidades formadora"{
+		assert.equals(#{rosario, corrientes, hurlingham}, edesur.universidadesDondeEstudiaron() )
+	}
+	
+	test "profesional que pide menos plata"{
+		assert.equals(juana, edesur.profesionalMasBarato())
+	}
+	
+	test "provincias cubiertas"{
+		assert.that(edesur.provinciaCubierta("Cordoba"))
+		assert.that(edesur.provinciaCubierta("Santa Fe"))
+		assert.that(not edesur.provinciaCubierta("Misiones"))		
+	}
+	
+	test "empleados de x universidad"{
+		assert.equals(2, edesur.cuantosEstudiaron(rosario))
+		assert.equals(1, edesur.cuantosEstudiaron(hurlingham))
+		assert.equals(0, edesur.cuantosEstudiaron(sanMartin))
+	}
+}
+
+
+
+
+	
